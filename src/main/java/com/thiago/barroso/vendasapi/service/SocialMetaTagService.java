@@ -1,6 +1,7 @@
 package com.thiago.barroso.vendasapi.service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,18 +16,18 @@ public class SocialMetaTagService {
 	
 	private static Logger log = LoggerFactory.getLogger(SocialMetaTagService.class);
 	
-	public SocialMetaTag getSocialMetaTagByUrl(String url) {
+	public Optional<SocialMetaTag> getSocialMetaTagByUrl(String url) {
 		SocialMetaTag twitter = getTwitterCardByUrl(url);
 		if(!isEmpty(twitter)) {
-			return twitter;
+			return Optional.of(twitter);
 		}
 		
 		SocialMetaTag openGraph = getOpenGraphByUrl(url);
 		if(!isEmpty(openGraph)) {
-			return openGraph;
+			return Optional.of(openGraph);
 		}
 		
-		return null;
+		return Optional.empty();
 	}
 	
 	private SocialMetaTag getOpenGraphByUrl(String url) {
@@ -70,11 +71,11 @@ public class SocialMetaTagService {
 		}
 	
 	public boolean isEmpty(SocialMetaTag tag) {
-		if(tag.getImage().isEmpty()) return true;
-		if(tag.getSite().isEmpty()) return true;
-		if(tag.getTitle().isEmpty()) return true;
-		if(tag.getUrl().isEmpty()) return true;
-		return false;
+	    if (tag.getImage() == null || tag.getImage().isEmpty()) return true;
+	    if (tag.getSite() == null || tag.getSite().isEmpty()) return true;
+	    if (tag.getTitle() == null || tag.getTitle().isEmpty()) return true;
+	    if (tag.getUrl() == null || tag.getUrl().isEmpty()) return true;
+	    return false;
 	}
 	
 }

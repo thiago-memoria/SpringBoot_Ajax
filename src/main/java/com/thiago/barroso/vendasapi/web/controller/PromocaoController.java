@@ -26,7 +26,9 @@ import com.thiago.barroso.vendasapi.domain.Categoria;
 import com.thiago.barroso.vendasapi.domain.Promocao;
 import com.thiago.barroso.vendasapi.repository.CategoriaRepository;
 import com.thiago.barroso.vendasapi.repository.PromocaoRepository;
+import com.thiago.barroso.vendasapi.service.PromocaoDataTableService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
@@ -40,6 +42,17 @@ public class PromocaoController {
 	
 	@Autowired
 	PromocaoRepository promocaoRepository;
+	
+	@GetMapping("/tabela")
+	public String showTabela() {
+		return "promo-datatables";
+	}
+	
+	@GetMapping("/datatables/server")
+	public ResponseEntity<?> datatables(HttpServletRequest request){
+		Map<String, Object> data = new PromocaoDataTableService().execute(promocaoRepository, request);
+		return ResponseEntity.ok(data);
+	}
 	
 	@GetMapping("/site")
 	public ResponseEntity<?> autocompleteByTermo(@RequestParam("termo") String termo){

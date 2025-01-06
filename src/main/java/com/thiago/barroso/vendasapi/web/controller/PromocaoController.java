@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.thiago.barroso.vendasapi.domain.Categoria;
 import com.thiago.barroso.vendasapi.domain.Promocao;
+import com.thiago.barroso.vendasapi.dto.PromocaoDTO;
 import com.thiago.barroso.vendasapi.repository.CategoriaRepository;
 import com.thiago.barroso.vendasapi.repository.PromocaoRepository;
 import com.thiago.barroso.vendasapi.service.PromocaoDataTableService;
@@ -52,6 +53,41 @@ public class PromocaoController {
 	public ResponseEntity<?> datatables(HttpServletRequest request){
 		Map<String, Object> data = new PromocaoDataTableService().execute(promocaoRepository, request);
 		return ResponseEntity.ok(data);
+	}
+	
+	@GetMapping("/delete/{id}")
+	public ResponseEntity<?> excluirPromocao(@PathVariable("id") Long id){
+		promocaoRepository.deleteById(id);
+		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/edit/{id}")
+	public ResponseEntity<?> preEditarPromocao(@PathVariable("id") Long id){
+		Promocao promocao =  promocaoRepository.findById(id).get();
+		return ResponseEntity.ok(promocao);
+	}
+	
+	@PostMapping("/edit")
+	public ResponseEntity<?> editarPromocao(@Valid PromocaoDTO dto, BindingResult result){
+		
+		if(result.hasErrors()) {
+			Map<String, String> errors = new HashMap<>();
+			for(FieldError error : result.getFieldErrors()) {
+				errors.put(error.getField(), error.getDefaultMessage());
+			}
+			return ResponseEntity.unprocessableEntity().body(errors);
+		}
+		
+		Promocao promo = promocaoRepository.findById(dto.getId()).get();
+		promo.setCategoria(dto.getCategoria());
+		promo.setDescricao(dto.getDescricao());
+		promo.setLinkImagem(dto.getLinkImagem());
+		promo.setPreco(dto.getPreco());
+		promo.setTitulo(dto.getTitulo());
+		
+		promocaoRepository.save(promo);
+		
+		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping("/site")

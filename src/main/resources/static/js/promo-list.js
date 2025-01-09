@@ -118,3 +118,19 @@ $("#autocomplete-submit").on("click", function(){
 		}
 	})
 })
+
+//SSE
+window.onload = init();
+
+function init(){
+	
+	const evtSource = new EventSource("/promocao/notificacao");
+	
+	evtSource.onopen = (event) => {
+		console.log("The connection has been established.");
+	}
+	
+	evtSource.onmessage = (event) => {
+		console.log("New message", event.data);
+	};
+};
